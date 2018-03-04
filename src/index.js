@@ -5,6 +5,7 @@ import { createStore, combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { loadState, saveState } from './localStorage';
 import { v4 } from 'node-uuid';
+import throttle from 'lodash/throttle'; // We only want a part of this library, so we can just import throttle instead of the whole thing.
 import './index.css';
 import expect from 'expect';
 var deepFreeze = require('deep-freeze');
@@ -242,9 +243,11 @@ const persistedState = loadState();
 
 const store = createStore(todoApp, persistedState);
 
-store.subscribe(() => {
-	saveState({ todos: store.getState().todos });
-});
+store.subscribe(
+	throttle(() => {
+		saveState({ todos: store.getState().todos });
+	}, 1000) // Throttle will make sure we only write to the localStorage once a second, to minimize the usage of costly processing power.
+);
 
 ReactDOM.render(
 	<Provider store={store}>
