@@ -1,4 +1,4 @@
-import { combinedReducers } from 'redux';
+import { combineReducers } from 'redux';
 import todo from './todo';
 
 const byId = (state = {}, action) => {
@@ -23,7 +23,7 @@ const allIds = (state = [], action) => {
 	}
 };
 
-const todos = combinedReducers({
+const todos = combineReducers({
 	byId,
 	allIds
 });
