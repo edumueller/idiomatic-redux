@@ -109,24 +109,21 @@ const testToggleTodo = () => {
 	expect(todos(stateBefore, action)).toEqual(stateAfter);
 };
 
-const addTodo = text => {
-	return {
-		type: 'ADD_TODO',
-		id: (nextTodoId++).toString(),
-		text
-	};
-};
+export const addTodo = text => ({
+	type: 'ADD_TODO',
+	id: (nextTodoId++).toString(),
+	text
+});
 
-const setVisibilityFilter = filter => {
-	return { type: 'SET_VISIBILITY_FILTER', filter };
-};
+export const setVisibilityFilter = filter => ({
+	type: 'SET_VISIBILITY_FILTER',
+	filter
+});
 
-const toggleTodo = id => {
-	return {
-		type: 'TOGGLE_TODO',
-		id
-	};
-};
+export const toggleTodo = id => ({
+	type: 'TOGGLE_TODO',
+	id
+});
 
 const { Component } = React;
 
@@ -147,19 +144,15 @@ const Link = ({ active, children, onClick }) => {
 	);
 };
 
-const mapStateToLinkProps = (state, ownProps) => {
-	return {
-		active: ownProps.filter === state.visibilityFilter
-	};
-};
-const mapDispatchToLinkProps = (dispatch, ownProps) => {
-	return {
-		onClick: () => {
-			dispatch(setVisibilityFilter(ownProps.filter));
-		}
-	};
-};
-const FilterLink = connect(mapStateToLinkProps, mapDispatchToLinkProps)(Link);
+const mapStateToProps = (state, ownProps) => ({
+	active: ownProps.filter === state.visibilityFilter
+});
+const mapDispatchToProps = (dispatch, ownProps) => ({
+	onClick() {
+		dispatch(setVisibilityFilter(ownProps.filter));
+	}
+});
+const FilterLink = connect(mapStateToProps, mapDispatchToProps)(Link);
 
 const Footer = () => (
 	<p>
@@ -224,16 +217,12 @@ const getVisibleTodos = (todos, filter) => {
 	}
 };
 
-const mapStateToTodoListProps = state => {
-	return {
-		todos: getVisibleTodos(state.todos, state.visibilityFilter)
-	};
-};
-const mapDispatchToTodoListProps = dispatch => {
-	return {
-		onTodoClick: id => dispatch(toggleTodo(id))
-	};
-};
+const mapStateToTodoListProps = state => ({
+	todos: getVisibleTodos(state.todos, state.visibilityFilter)
+});
+const mapDispatchToTodoListProps = dispatch => ({
+	onTodoClick: id => dispatch(toggleTodo(id))
+});
 const VisibleTodoList = connect(
 	mapStateToTodoListProps,
 	mapDispatchToTodoListProps
@@ -248,8 +237,18 @@ const TodoApp = () => (
 	</div>
 );
 
+const persistedState = {
+	todos: [
+		{
+			id: '0',
+			text: 'Welcome Back!',
+			completed: false
+		}
+	]
+};
+
 ReactDOM.render(
-	<Provider store={createStore(todoApp)}>
+	<Provider store={createStore(todoApp, persistedState)}>
 		<TodoApp />
 	</Provider>,
 	document.getElementById('root')
