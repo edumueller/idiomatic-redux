@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { createStore, combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
 import { loadState, saveState } from './localStorage';
+import { v4 } from 'node-uuid';
 import './index.css';
 import expect from 'expect';
 var deepFreeze = require('deep-freeze');
@@ -112,7 +113,7 @@ const testToggleTodo = () => {
 
 export const addTodo = text => ({
 	type: 'ADD_TODO',
-	id: (nextTodoId++).toString(),
+	id: v4(),
 	text
 });
 
@@ -229,7 +230,6 @@ const VisibleTodoList = connect(
 	mapDispatchToTodoListProps
 )(TodoList);
 
-let nextTodoId = 0;
 const TodoApp = () => (
 	<div>
 		<AddTodo />
