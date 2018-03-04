@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { createStore, combineReducers } from 'redux';
 import { Provider, connect } from 'react-redux';
+import { loadState, saveState } from './localStorage';
 import './index.css';
 import expect from 'expect';
 var deepFreeze = require('deep-freeze');
@@ -237,18 +238,16 @@ const TodoApp = () => (
 	</div>
 );
 
-const persistedState = {
-	todos: [
-		{
-			id: '0',
-			text: 'Welcome Back!',
-			completed: false
-		}
-	]
-};
+const persistedState = loadState();
+
+const store = createStore(todoApp, persistedState);
+
+store.subscribe(() => {
+	saveState({ todos: store.getState().todos });
+});
 
 ReactDOM.render(
-	<Provider store={createStore(todoApp, persistedState)}>
+	<Provider store={store}>
 		<TodoApp />
 	</Provider>,
 	document.getElementById('root')
