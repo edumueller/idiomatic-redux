@@ -34,7 +34,7 @@ export const addTodo = text => dispatch =>
 	api.addTodo(text).then(response => {
 		dispatch({
 			type: 'ADD_TODO_SUCCESS',
-			response: normalize(response, schema.arrayOfTodos)
+			response: normalize(response, schema.todo)
 		});
 	});
 
